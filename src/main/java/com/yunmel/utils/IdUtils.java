@@ -45,7 +45,7 @@ public class IdUtils {
 	}
 
 	/**********************以下为22位UUID生成方法******************************************/
-	private final static char[] DIGITS64 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+	private final static char[] DIGITS64 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-".toCharArray();
 	private static String toIdStr(long l) {
 		char[] buf = "00000000000".toCharArray(); // 限定11位长度
 		int length = 11;
@@ -60,5 +60,8 @@ public class IdUtils {
 		UUID u = UUID.randomUUID();
 		return toIdStr(u.getMostSignificantBits()) + toIdStr(u.getLeastSignificantBits());
 	}
-
+	
+	public static void main(String[] args) {
+		System.out.println(get22uuid());
+	}
 }
