@@ -19,7 +19,7 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.TaskMapper;
 import com.yunmel.biz.plan.model.Project;
 import com.yunmel.biz.plan.model.Task;
-import com.yunmel.utils.DealParamUtil;
+import com.yunmel.utils.ParamUtils;
 import com.yunmel.utils.Globle;
 
 /**
@@ -69,7 +69,7 @@ public class TaskService extends PlanBaseService<Task>{
 	 * @return List<Task>
 	 */
   	public PageInfo<Task> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Task> list = this.findByParams(params);
 	    return new PageInfo<>(list);

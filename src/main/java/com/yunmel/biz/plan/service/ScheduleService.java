@@ -13,8 +13,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.ScheduleMapper;
 import com.yunmel.biz.plan.model.Schedule;
-import com.yunmel.core.base.BaseService;
-import com.yunmel.utils.DealParamUtil;
+import com.yunmel.utils.ParamUtils;
 import com.yunmel.utils.Globle;
 
 /**
@@ -62,7 +61,7 @@ public class ScheduleService extends PlanBaseService<Schedule>{
 	 * @return List<Schedule>
 	 */
   	public PageInfo<Schedule> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Schedule> list = this.findByParams(params);
 	    return new PageInfo<>(list);

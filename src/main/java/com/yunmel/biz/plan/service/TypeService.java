@@ -13,8 +13,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.TypeMapper;
 import com.yunmel.biz.plan.model.Type;
-import com.yunmel.core.base.BaseService;
-import com.yunmel.utils.DealParamUtil;
+import com.yunmel.utils.ParamUtils;
 import com.yunmel.utils.Globle;
 
 /**
@@ -62,7 +61,7 @@ public class TypeService extends PlanBaseService<Type>{
 	 * @return List<Type>
 	 */
   	public PageInfo<Type> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Type> list = this.findByParams(params);
 	    return new PageInfo<>(list);
