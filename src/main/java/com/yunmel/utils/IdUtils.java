@@ -15,27 +15,22 @@ import java.util.UUID;
  * @since 1.0 - 2016年10月22日
  */
 public class IdUtils {
-	private static final IdWorker idWorker = new IdWorker(5, 1);
-	
 	private IdUtils(){}
-	
-	public static final Long getId() {
+	public static final String get(){
+		return get22uuid();
+	}
+
+	private static final IdWorker idWorker = new IdWorker(5, 1);
+	public static final long getLong(){
 		return idWorker.nextId();
 	}
 
-	/**
-	 * 
-	 * @return 15位长度
-	 */
-	public static final String getUID() {
+	private static final String getUID() {
 		String machineId = "a";// 最大支持1-9个集群机器部署
 		int hashCodeV = UUID.randomUUID().toString().hashCode();
 		if (hashCodeV < 0) {// 有可能是负数
 			hashCodeV = -hashCodeV;
 		}
-		// 0 代表前面补充0
-		// 4 代表长度为4
-		// d 代表参数为正数型
 		return machineId + String.format("%015d", hashCodeV);
 	}
 	
@@ -45,12 +40,25 @@ public class IdUtils {
 	 * @author chen
 	 * @deprecated 32位 长度
 	 */
-	public static final String getUUID(){
+	private static final String getUUID(){
 		return UUID.randomUUID().toString().trim().replaceAll("-", "");
 	}
-	
-	public static void main(String[] args) {
-		System.out.println(getUID());
-		System.out.println(getUID());
+
+	/**********************以下为22位UUID生成方法******************************************/
+	private final static char[] DIGITS64 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+	private static String toIdStr(long l) {
+		char[] buf = "00000000000".toCharArray(); // 限定11位长度
+		int length = 11;
+		long least = 63L; // 0x0000003FL
+		do {
+			buf[--length] = DIGITS64[(int) (l & least)]; // l & least取低6位
+			l >>>= 6;
+		} while (l != 0);
+		return new String(buf);
 	}
+	private static final String get22uuid() {
+		UUID u = UUID.randomUUID();
+		return toIdStr(u.getMostSignificantBits()) + toIdStr(u.getLeastSignificantBits());
+	}
+
 }

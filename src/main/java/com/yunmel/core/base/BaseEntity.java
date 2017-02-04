@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 public class BaseEntity extends JSONObject {
 	private static final long serialVersionUID = -6259412242789016371L;
 	@Id
-	private Long id;
+	private String id;
 
 	@Transient
 	private Integer page = 1;
@@ -23,11 +23,11 @@ public class BaseEntity extends JSONObject {
 	@Transient
 	private Integer rows = 10;
 
-	public Long getId() {
-		return this.getLong("id");
+	public String getId() {
+		return this.getString("id");
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.put("id", id);
 	}
 
