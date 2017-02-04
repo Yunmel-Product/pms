@@ -14,15 +14,15 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.TypeMapper;
 import com.yunmel.biz.plan.model.Type;
 import com.yunmel.core.base.BaseService;
-import com.yunmel.utils.DealParamUtil;
 import com.yunmel.utils.Globle;
+import com.yunmel.utils.ParamUtils;
 
 /**
  * Type 业务管理
  * @author yunmel
  */
 @Service("typeService")
-public class TypeService extends PlanBaseService<Type>{
+public class TypeService extends BaseService<Type>{
 	private Logger LOG = LoggerFactory.getLogger(TypeService.class);
 	@Resource
 	private TypeMapper typeMapper;
@@ -62,7 +62,7 @@ public class TypeService extends PlanBaseService<Type>{
 	 * @return List<Type>
 	 */
   	public PageInfo<Type> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Type> list = this.findByParams(params);
 	    return new PageInfo<>(list);

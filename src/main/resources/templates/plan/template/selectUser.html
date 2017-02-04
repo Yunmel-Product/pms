@@ -28,9 +28,6 @@
 		</tr>
 	</tbody>
 </table>
-<div>
-	<button id="saveButton">保存</button>
-</div>
 </body>
 <script type="text/javascript">
 	var selectData = null;
@@ -41,7 +38,7 @@
 	
 	function getData(){
 		//检查是否已经有用户存在了
-		yunmel.fun.post('/assignment/getTaskUser',{taskId:},function(text){
+		yunmel.fun.post('/assignment/getTaskUser',{taskId:'${taskId}'},function(text){
 			
 		});
 		

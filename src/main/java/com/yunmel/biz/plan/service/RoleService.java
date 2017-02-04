@@ -14,7 +14,7 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.RoleMapper;
 import com.yunmel.biz.plan.model.Role;
 import com.yunmel.core.base.BaseService;
-import com.yunmel.utils.DealParamUtil;
+import com.yunmel.utils.ParamUtils;
 import com.yunmel.utils.Globle;
 
 /**
@@ -22,7 +22,7 @@ import com.yunmel.utils.Globle;
  * @author yunmel
  */
 @Service("roleService")
-public class RoleService extends PlanBaseService<Role>{
+public class RoleService extends BaseService<Role>{
 	private Logger LOG = LoggerFactory.getLogger(RoleService.class);
 	@Resource
 	private RoleMapper roleMapper;
@@ -62,7 +62,7 @@ public class RoleService extends PlanBaseService<Role>{
 	 * @return List<Role>
 	 */
   	public PageInfo<Role> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Role> list = this.findByParams(params);
 	    return new PageInfo<>(list);

@@ -1,9 +1,12 @@
 package com.yunmel.biz.plan.model;
 
-import java.util.*;
-import javax.persistence.*;
+import java.util.Date;
+
+import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.yunmel.core.base.BaseEntity;
 
 /**
 * Role实体类
@@ -11,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 */
 @SuppressWarnings({ "unused"})
 @Table(name="plan_role")
-public class Role extends PlanBaseModel{
+public class Role extends BaseEntity{
 	private String name;
 	private String description;
 	private Date creationDate;

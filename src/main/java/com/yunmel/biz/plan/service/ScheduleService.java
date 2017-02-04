@@ -14,15 +14,15 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.ScheduleMapper;
 import com.yunmel.biz.plan.model.Schedule;
 import com.yunmel.core.base.BaseService;
-import com.yunmel.utils.DealParamUtil;
 import com.yunmel.utils.Globle;
+import com.yunmel.utils.ParamUtils;
 
 /**
  * Schedule 业务管理
  * @author yunmel
  */
 @Service("scheduleService")
-public class ScheduleService extends PlanBaseService<Schedule>{
+public class ScheduleService extends BaseService<Schedule>{
 	private Logger LOG = LoggerFactory.getLogger(ScheduleService.class);
 	@Resource
 	private ScheduleMapper scheduleMapper;
@@ -62,7 +62,7 @@ public class ScheduleService extends PlanBaseService<Schedule>{
 	 * @return List<Schedule>
 	 */
   	public PageInfo<Schedule> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Schedule> list = this.findByParams(params);
 	    return new PageInfo<>(list);

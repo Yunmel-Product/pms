@@ -1,9 +1,12 @@
 package com.yunmel.biz.plan.model;
 
-import java.util.*;
-import javax.persistence.*;
+import java.util.Date;
+
+import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.yunmel.core.base.BaseEntity;
 
 /**
 * User实体类
@@ -11,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 */
 @SuppressWarnings({ "unused"})
 @Table(name="plan_user")
-public class User extends PlanBaseModel{
+public class User extends BaseEntity{
 	private Date lastModified;
 	private String lastModifier;
 	private String creator;

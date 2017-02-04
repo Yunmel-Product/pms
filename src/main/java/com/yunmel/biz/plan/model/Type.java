@@ -1,9 +1,8 @@
 package com.yunmel.biz.plan.model;
 
-import java.util.*;
-import javax.persistence.*;
+import javax.persistence.Table;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import com.yunmel.core.base.BaseEntity;
 
 /**
 * Type实体类
@@ -11,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 */
 @SuppressWarnings({ "unused"})
 @Table(name="plan_type")
-public class Type extends PlanBaseModel{
+public class Type extends BaseEntity{
 	private String typeId;
 	private String description;
 	private String type;

@@ -13,15 +13,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.AssignmentMapper;
 import com.yunmel.biz.plan.model.Assignment;
-import com.yunmel.utils.DealParamUtil;
+import com.yunmel.core.base.BaseService;
 import com.yunmel.utils.Globle;
+import com.yunmel.utils.ParamUtils;
 
 /**
  * Assignment 业务管理
  * @author yunmel
  */
 @Service("assignmentService")
-public class AssignmentService extends PlanBaseService<Assignment>{
+public class AssignmentService extends BaseService<Assignment>{
 	private Logger LOG = LoggerFactory.getLogger(AssignmentService.class);
 	@Resource
 	private AssignmentMapper assignmentMapper;
@@ -61,7 +62,7 @@ public class AssignmentService extends PlanBaseService<Assignment>{
 	 * @return List<Assignment>
 	 */
   	public PageInfo<Assignment> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Assignment> list = this.findByParams(params);
 	    return new PageInfo<>(list);

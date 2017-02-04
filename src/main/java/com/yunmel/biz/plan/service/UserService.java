@@ -14,15 +14,15 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.UserMapper;
 import com.yunmel.biz.plan.model.User;
 import com.yunmel.core.base.BaseService;
-import com.yunmel.utils.DealParamUtil;
 import com.yunmel.utils.Globle;
+import com.yunmel.utils.ParamUtils;
 
 /**
  * User 业务管理
  * @author yunmel
  */
 @Service("userService")
-public class UserService extends PlanBaseService<User>{
+public class UserService extends BaseService<User>{
 	private Logger LOG = LoggerFactory.getLogger(UserService.class);
 	@Resource
 	private UserMapper userMapper;
@@ -62,7 +62,7 @@ public class UserService extends PlanBaseService<User>{
 	 * @return List<User>
 	 */
   	public PageInfo<User> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<User> list = this.findByParams(params);
 	    return new PageInfo<>(list);

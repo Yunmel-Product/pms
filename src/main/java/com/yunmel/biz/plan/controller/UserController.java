@@ -23,6 +23,7 @@ public class UserController {
 	
 	@RequestMapping("goSelectUser")
 	public String goSelectUser(Model model,@RequestParam String taskId){
+		model.addAttribute("taskId", taskId);
 		return "plan/template/selectUser";
 	}
 	

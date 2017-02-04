@@ -19,15 +19,16 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.TaskMapper;
 import com.yunmel.biz.plan.model.Project;
 import com.yunmel.biz.plan.model.Task;
-import com.yunmel.utils.DealParamUtil;
+import com.yunmel.core.base.BaseService;
 import com.yunmel.utils.Globle;
+import com.yunmel.utils.ParamUtils;
 
 /**
  * Task 业务管理
  * @author yunmel
  */
 @Service("taskService")
-public class TaskService extends PlanBaseService<Task>{
+public class TaskService extends BaseService<Task>{
 	private Logger LOG = LoggerFactory.getLogger(TaskService.class);
 	@Resource
 	private TaskMapper taskMapper;
@@ -69,7 +70,7 @@ public class TaskService extends PlanBaseService<Task>{
 	 * @return List<Task>
 	 */
   	public PageInfo<Task> findPageInfo(Map<String, Object> params) {
-	    DealParamUtil.dealParam(params);
+	    ParamUtils.dealParam(params);
 	    PageHelper.startPage(params);
 	    List<Task> list = this.findByParams(params);
 	    return new PageInfo<>(list);

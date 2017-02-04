@@ -426,8 +426,9 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     var taskId = taskRow.attr("taskId");
     //console.debug(task);
     
+    /*var llink = "/user/goSelectUser?taskId="+taskId;
     var lIndex = layer.open({
-    	content:"/user/goSelectUser?taskId"+taskId,
+    	content:llink,
     	type:2,
     	area: ['520px', '340px'],
     	btn:["确定","取消"],
@@ -437,9 +438,10 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     		console.log(rtn);
     		layer.close(lIndex);
     	}
-    });
+    });*/
+    
     //make task editor
-    /*var taskEditor = $.JST.createFromTemplate({}, "TASK_EDITOR");
+    var taskEditor = $.JST.createFromTemplate({}, "TASK_EDITOR");
 
     taskEditor.find("#name").val(task.name);
     taskEditor.find("#description").val(task.description);
@@ -630,5 +632,5 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
         });
     }
 
-    var ndo = createBlackPage(800, 500).append(taskEditor);*/
+    var ndo = createBlackPage(800, 500).append(taskEditor);
 };

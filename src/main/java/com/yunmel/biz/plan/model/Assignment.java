@@ -5,13 +5,15 @@ import javax.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.yunmel.core.base.BaseEntity;
+
 /**
 * Assignment实体类
 * @author yunmel
 */
 @SuppressWarnings({ "unused"})
 @Table(name="plan_assignment")
-public class Assignment extends PlanBaseModel{
+public class Assignment extends BaseEntity{
 	private String description;
 	private String userId;
 	private String taskId;

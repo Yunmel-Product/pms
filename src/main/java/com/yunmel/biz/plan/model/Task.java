@@ -1,9 +1,12 @@
 package com.yunmel.biz.plan.model;
 
-import java.util.*;
-import javax.persistence.*;
+import java.util.Date;
+
+import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.yunmel.core.base.BaseEntity;
 
 /**
 * Task实体类
@@ -11,7 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 */
 @SuppressWarnings({ "unused"})
 @Table(name="plan_task")
-public class Task extends PlanBaseModel{
+public class Task extends BaseEntity{
 	private String code;
 	private String name;
 	private String typeId;
