@@ -164,6 +164,8 @@ public class TaskService extends PlanBaseService<Task>{
 		task.setProjectId(id);
 		List<Task> tasks = this.select(task, " `code` ASC ");
 		
+		
+		
 		project.setTasks(tasks);
 		
 		return project;
