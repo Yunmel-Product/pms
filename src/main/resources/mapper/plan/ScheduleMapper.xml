@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.yunmel.biz.plan.mapper.ScheduleMapper">
+
+	<sql id="scheduleColumns">
+		ID,DISCRIMINATOR,START,END,START_TIME,DURATION,FREQ,REPEATX,ONLY_WORKING_DAYS,DAY_OF_WEEK,WEEK_OF_MONTH,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<sql id="aliasScheduleColumns">
+		a.ID,a.DISCRIMINATOR,a.START,a.END,a.START_TIME,a.DURATION,a.FREQ,a.REPEATX,a.ONLY_WORKING_DAYS,a.DAY_OF_WEEK,a.WEEK_OF_MONTH,a.CREATE_BY,a.CREATE_DATE,a.UPDATE_BY,a.UPDATE_DATE,a.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.yunmel.biz.plan.model.Schedule">
+		select  <include refid="aliasScheduleColumns" /> 
+			from plan_schedule  a 
+		<where>
+			1=1
+			AND a.DEL_FLAG=0
+		  			<if test="discriminator != null and discriminator !='' ">
+			    and a.DISCRIMINATOR like CONCAT( '%' , #{discriminator}, '%') 
+			</if>
+			<if test="startStart != null and startStart !='' ">
+			    and a.START &gt;=  #{startStart}
+			</if>
+			<if test="startEnd != null and startEnd !='' ">
+			    and a.START &lt;=  #{startEnd}
+			</if>
+			<if test="endStart != null and endStart !='' ">
+			    and a.END &gt;=  #{endStart}
+			</if>
+			<if test="endEnd != null and endEnd !='' ">
+			    and a.END &lt;=  #{endEnd}
+			</if>
+			<if test="startTime != null and startTime !='' ">
+			    and a.START_TIME =  #{startTime}
+			</if>
+			<if test="duration != null and duration !='' ">
+			    and a.DURATION =  #{duration}
+			</if>
+			<if test="freq != null and freq !='' ">
+			    and a.FREQ =  #{freq}
+			</if>
+			<if test="repeatx != null and repeatx !='' ">
+			    and a.REPEATX =  #{repeatx}
+			</if>
+			<if test="onlyWorkingDays != null and onlyWorkingDays !='' ">
+			    and a.ONLY_WORKING_DAYS =  #{onlyWorkingDays}
+			</if>
+			<if test="dayOfWeek != null and dayOfWeek !='' ">
+			    and a.DAY_OF_WEEK =  #{dayOfWeek}
+			</if>
+			<if test="weekOfMonth != null and weekOfMonth !='' ">
+			    and a.WEEK_OF_MONTH =  #{weekOfMonth}
+			</if>
+			<if test="createBy != null and createBy !='' ">
+			    and a.CREATE_BY like CONCAT( '%' , #{createBy}, '%') 
+			</if>
+			<if test="createDate != null and createDate !='' ">
+			    and a.CREATE_DATE =  #{createDate}
+			</if>
+			<if test="updateBy != null and updateBy !='' ">
+			    and a.UPDATE_BY like CONCAT( '%' , #{updateBy}, '%') 
+			</if>
+			<if test="updateDate != null and updateDate !='' ">
+			    and a.UPDATE_DATE =  #{updateDate}
+			</if>
+
+		</where>
+		<if test="sort != null and sort != '' and order != null and order != ''"> 
+			ORDER BY a.${sort}   ${order}
+		</if>
+	</select>
+</mapper>

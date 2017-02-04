@@ -1,0 +1,361 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>工程甘特图 - 云麦尔</title>
+
+  <link rel=stylesheet href="${ctxPath}/static/plan/platform.css" type="text/css">
+  <link rel=stylesheet href="${ctxPath}/static/plan/libs/dateField/jquery.dateField.css" type="text/css">
+
+  <link rel=stylesheet href="${ctxPath}/static/plan/gantt.css" type="text/css">
+  <link rel=stylesheet href="${ctxPath}/static/plan/ganttPrint.css" type="text/css" media="print">
+
+  <script src="http://cdn.bootcss.com/jquery/1.8.0/jquery-1.8.0.min.js"></script>
+  <script src="http://cdn.bootcss.com/jqueryui/1.8.13/jquery-ui.min.js"></script>
+
+  <script src="${ctxPath}/static/plan/libs/jquery.livequery.min.js"></script>
+  <script src="${ctxPath}/static/plan/libs/jquery.timers.js"></script>
+  <script src="${ctxPath}/static/plan/libs/platform.js"></script>
+  <script src="${ctxPath}/static/plan/libs/date.js"></script>
+  <script src="${ctxPath}/static/plan/libs/i18nJs.js"></script>
+  <script src="${ctxPath}/static/plan/libs/dateField/jquery.dateField.js"></script>
+  <script src="${ctxPath}/static/plan/libs/JST/jquery.JST.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="${ctxPath}/static/plan/libs/jquery.svg.css">
+  <script type="text/javascript" src="${ctxPath}/static/plan/libs/jquery.svg.min.js"></script>
+
+  <!--In case of jquery 1.7-->
+  <!--<script type="text/javascript" src="${ctxPath}/static/plan/libs/jquery.svgdom.pack.js"></script>-->
+
+  <!--In case of jquery 1.8-->
+  <script type="text/javascript" src="${ctxPath}/static/plan/libs/jquery.svgdom.1.8.js"></script>
+
+
+  <script src="${ctxPath}/static/plan/ganttUtilities.js"></script>
+  <script src="${ctxPath}/static/plan/ganttTask.js"></script>
+  <script src="${ctxPath}/static/plan/ganttDrawerSVG.js"></script>
+  <!--<script src="${ctxPath}/static/plan/ganttDrawer.js"></script>-->
+  <script src="${ctxPath}/static/plan/ganttGridEditor.js"></script>
+  <script src="${ctxPath}/static/plan/ganttMaster.js"></script>  
+  <style>
+  .resEdit {padding: 15px;}
+
+  .resLine {width: 95%;padding: 3px;margin: 5px;border: 1px solid #d0d0d0;}
+
+  body {overflow: hidden;}
+
+  .ganttButtonBar h1{color: #000000;font-weight: bold;font-size: 28px;margin-left: 10px;}
+
+</style>
+</head>
+<body style="background-color: #fff;">
+<div><span class="button noprint textual   " id="domId_1688723823" style="" onclick="$('#workSpace').trigger('addBelowCurrentTask.gantt');return false; ">+ 添加子任务</span>
+
+<span class="button noprint textual   " id="domId_1237414409" style="" onclick="$('#workSpace').trigger('addAboveCurrentTask.gantt');return false; ">+ 添加同级任务</span>
+
+</div>
+
+<div id="workSpace" style="padding:0px; overflow-y:auto; overflow-x:hidden;border:1px solid #e5e5e5;position:relative;margin:0 5px"></div>
+
+<form id="gimmeBack" style="display:none;" action="../gimmeBack.jsp" method="post" target="_blank"><input type="hidden" name="prj" id="gimBaPrj"></form>
+@layout("template/template.html"){}
+
+<script type="text/javascript">
+
+var ge;  //this is the hugly but very friendly global var for the gantt editor
+var contextPath = "${ctxPath}";
+$(function() {
+
+  //load templates
+  $("#ganttemplates").loadTemplates();
+
+  // here starts gantt initialization
+  ge = new GanttMaster();
+  //TODO:是否自动显示bar
+  ge.isBrowserTaskBar = true;
+  //TODO:设置code是否自动编码
+  ge.isLevelCode = true;
+
+  
+  var workSpace = $("#workSpace");
+  workSpace.css({width:$(window).width() - 20,height:$(window).height() - 100});
+  ge.init(workSpace);
+
+  //inject some buttons (for this demo only)
+  $(".ganttButtonBar div").append("<button onclick='clearGantt();' class='button'>clear</button>")
+          .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+          .append("<button onclick='getFile();' class='button'>export</button>");
+  $(".ganttButtonBar h1").html("<a href='#' title='Twproject the friendly project and work management tool' target='_blank'><img width='80%' src='${ctxPath}/static/plan/res/twBanner.jpg'></a>");
+  $(".ganttButtonBar div").addClass('buttons');
+  //overwrite with localized ones
+  loadI18n();
+
+  //simulate a data load from a server.
+  loadGanttFromServer();
+
+
+  //fill default Teamwork roles if any
+  if (!ge.roles || ge.roles.length == 0) {
+    setRoles();
+  }
+
+  //fill default Resources roles if any
+  if (!ge.resources || ge.resources.length == 0) {
+    setResource();
+  }
+
+  $(window).resize(function(){
+    workSpace.css({width:$(window).width() - 1,height:$(window).height() - workSpace.position().top});
+    workSpace.trigger("resize.gantt");
+  }).oneTime(150,"resize",function(){$(this).trigger("resize")});
+
+});
+
+
+function loadGanttFromServer(taskId, callback) {
+  var taskId = 20;
+
+  $.ajax({
+	  url:'${ctxPath}/plan/getGanttData',
+	  data:{CM: "LOADPROJECT", taskId: taskId},
+	  type:'post',
+	  dataType:'json',
+	  success:function(text){
+		  if(text){
+			  ge.loadProject(text);
+			  ge.checkpoint(); //empty the undo stack
+	          ge.levelCode();
+		  }
+	  },error:function(text){
+		  console.log(text);
+	  }
+  });
+}
+
+
+function saveGanttOnServer() {
+  var prj = ge.saveProject();
+
+  if (ge.deletedTaskIds.length>0) {
+    if (!confirm("TASK_THAT_WILL_BE_REMOVED\n"+ge.deletedTaskIds.length)) {
+      return;
+    }
+  }
+
+  console.log(prj);
+  
+  //var json = "{\"tasks\":[{\"id\":\"1\",\"name\":\"1024项目\",\"progress\":0,\"progressByWorklog\":true,\"relevance\":100,\"type\":\"一乐项目类型\",\"typeId\":10,\"description\":\"一乐项目描述\",\"code\":\"1024\",\"level\":0,\"status\":\"STATUS_ACTIVE\",\"depends\":\"\",\"canWrite\":true,\"start\":1483311600000,\"duration\":22,\"end\":1485903599999,\"startIsMilestone\":false,\"endIsMilestone\":true,\"collapsed\":false,\"assigs\":[{\"id\":\"1\",\"roleId\":\"5\",\"resourceId\":\"1\",\"effort\":0,\"unchanged\":true},{\"id\":\"2\",\"roleId\":\"8\",\"resourceId\":\"3\",\"effort\":0,\"unchanged\":true}],\"loadComplete\":false,\"statusColor\":\"#3BBF67\",\"tags\":\"一乐、陈扬、哈哈、标签\",\"startDate\":\"2017-1-2\",\"endDate\":\"2017-1-31\",\"lastModified\":1484892370476,\"lastModifier\":\"陈 杨\",\"totalIssues\":0,\"openIssues\":0,\"budget\":0,\"totalCosts\":0,\"totalWorklog\":0,\"totalEstimated\":0,\"canAddIssue\":true,\"hasChild\":true,\"unchanged\":false},{\"id\":\"tmp_1484892377097\",\"name\":\"11\",\"progress\":0,\"progressByWorklog\":false,\"relevance\":0,\"type\":\"\",\"typeId\":\"\",\"description\":\"\",\"code\":\"\",\"level\":1,\"status\":\"STATUS_ACTIVE\",\"depends\":\"\",\"canWrite\":true,\"start\":1483311600000,\"duration\":1,\"end\":1483397999999,\"startIsMilestone\":false,\"endIsMilestone\":false,\"assigs\":[],\"hasChild\":true},{\"id\":\"tmp_1484892398337\",\"name\":\"21\",\"progress\":0,\"progressByWorklog\":false,\"relevance\":0,\"type\":\"\",\"typeId\":\"\",\"description\":\"\",\"code\":\"\",\"level\":2,\"status\":\"STATUS_ACTIVE\",\"depends\":\"\",\"canWrite\":true,\"start\":1483311600000,\"duration\":1,\"end\":1483397999999,\"startIsMilestone\":false,\"endIsMilestone\":false,\"assigs\":[],\"hasChild\":true},{\"id\":\"tmp_1484892405401\",\"name\":\"31\",\"progress\":0,\"progressByWorklog\":false,\"relevance\":0,\"type\":\"\",\"typeId\":\"\",\"description\":\"\",\"code\":\"\",\"level\":3,\"status\":\"STATUS_ACTIVE\",\"depends\":\"\",\"canWrite\":true,\"start\":1483311600000,\"duration\":1,\"end\":1483397999999,\"startIsMilestone\":false,\"endIsMilestone\":false,\"assigs\":[],\"hasChild\":false},{\"id\":\"tmp_1484892383561\",\"name\":\"22\",\"progress\":0,\"progressByWorklog\":false,\"relevance\":0,\"type\":\"\",\"typeId\":\"\",\"description\":\"\",\"code\":\"\",\"level\":2,\"status\":\"STATUS_ACTIVE\",\"depends\":\"\",\"canWrite\":true,\"start\":1483311600000,\"duration\":1,\"end\":1483397999999,\"startIsMilestone\":false,\"endIsMilestone\":false,\"assigs\":[],\"hasChild\":false}],\"selectedRow\":1,\"deletedTaskIds\":[],\"resources\":[{\"id\":\"3\",\"name\":\"晨 晨\"},{\"id\":\"1\",\"name\":\"杨 陈\"}],\"roles\":[{\"id\":\"5\",\"name\":\"Project manager\"},{\"id\":\"8\",\"name\":\"Worker\"},{\"id\":\"7\",\"name\":\"Customer\"},{\"id\":\"6\",\"name\":\"Stakeholder\"}],\"canWrite\":true,\"canWriteOnParent\":true,\"splitterPosition\":75.38586515028433,\"zoom\":\"w3\",\"changesReasonWhy\":\"\"}";
+  var json = JSON.stringify(prj);
+  $.ajax({
+	  url:'${ctxPath}/gantt/saveGanttData',
+	  data:{json : json},
+	  type:'post',
+	  dataType:'json',
+	  success:function(text){
+		  if(text){
+			  ge.loadProject(text);
+			  ge.checkpoint(); //empty the undo stack
+		  }
+	  },error:function(text){
+		  console.log(text);
+	  }
+  });
+}
+
+
+//-------------------------------------------  Create some demo data ------------------------------------------------------
+function setRoles() {
+  ge.roles = [
+    {
+      id:"tmp_1",
+      name:"Project Manager"
+    },
+    {
+      id:"tmp_2",
+      name:"Worker"
+    },
+    {
+      id:"tmp_3",
+      name:"Stakeholder/Customer"
+    }
+  ];
+}
+
+function setResource() {
+  var res = [];
+  for (var i = 1; i <= 10; i++) {
+    res.push({id:"tmp_" + i,name:"Resource " + i});
+  }
+  ge.resources = res;
+}
+
+
+function editResources(){
+
+}
+
+function clearGantt() {
+  ge.reset();
+}
+
+function loadI18n() {
+  GanttMaster.messages = {
+    "CANNOT_WRITE":                  "CANNOT_WRITE",
+    "CHANGE_OUT_OF_SCOPE":"NO_RIGHTS_FOR_UPDATE_PARENTS_OUT_OF_EDITOR_SCOPE",
+    "START_IS_MILESTONE":"START_IS_MILESTONE",
+    "END_IS_MILESTONE":"END_IS_MILESTONE",
+    "TASK_HAS_CONSTRAINTS":"TASK_HAS_CONSTRAINTS",
+    "GANTT_ERROR_DEPENDS_ON_OPEN_TASK":"GANTT_ERROR_DEPENDS_ON_OPEN_TASK",
+    "GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK":"GANTT_ERROR_DESCENDANT_OF_CLOSED_TASK",
+    "TASK_HAS_EXTERNAL_DEPS":"TASK_HAS_EXTERNAL_DEPS",
+    "GANTT_ERROR_LOADING_DATA_TASK_REMOVED":"GANTT_ERROR_LOADING_DATA_TASK_REMOVED",
+    "ERROR_SETTING_DATES":"ERROR_SETTING_DATES",
+    "CIRCULAR_REFERENCE":"CIRCULAR_REFERENCE",
+    "CANNOT_DEPENDS_ON_ANCESTORS":"CANNOT_DEPENDS_ON_ANCESTORS",
+    "CANNOT_DEPENDS_ON_DESCENDANTS":"CANNOT_DEPENDS_ON_DESCENDANTS",
+    "INVALID_DATE_FORMAT":"INVALID_DATE_FORMAT",
+    "TASK_MOVE_INCONSISTENT_LEVEL":"TASK_MOVE_INCONSISTENT_LEVEL",
+
+    "GANTT_QUARTER_SHORT":"trim.",
+    "GANTT_SEMESTER_SHORT":"sem."
+  };
+}
+
+
+
+//-------------------------------------------  Get project file as JSON (used for migrate project from gantt to Teamwork) ------------------------------------------------------
+function getFile() {
+  $("#gimBaPrj").val(JSON.stringify(ge.saveProject()));
+  $("#gimmeBack").submit();
+  $("#gimBaPrj").val("");
+
+  /*  var uriContent = "data:text/html;charset=utf-8," + encodeURIComponent(JSON.stringify(prj));
+   neww=window.open(uriContent,"dl");*/
+}
+
+
+//-------------------------------------------  LOCAL STORAGE MANAGEMENT (for this demo only) ------------------------------------------------------
+Storage.prototype.setObject = function(key, value) {
+  this.setItem(key, JSON.stringify(value));
+};
+
+
+Storage.prototype.getObject = function(key) {
+  return this.getItem(key) && JSON.parse(this.getItem(key));
+};
+
+function saveInLocalStorage() {
+  var prj = ge.saveProject();
+  if (localStorage) {
+    localStorage.setObject("teamworkGantDemo", prj);
+  } else {
+    $("#ta").val(JSON.stringify(prj));
+  }
+}
+
+
+//-------------------------------------------  Open a black popup for managing resources. This is only an axample of implementation (usually resources come from server) ------------------------------------------------------
+
+function editResources(){
+
+  //make resource editor
+  var resourceEditor = $.JST.createFromTemplate({}, "RESOURCE_EDITOR");
+  var resTbl=resourceEditor.find("#resourcesTable");
+
+  for (var i=0;i<ge.resources.length;i++){
+    var res=ge.resources[i];
+    resTbl.append($.JST.createFromTemplate(res, "RESOURCE_ROW"))
+  }
+
+
+  //bind add resource
+  resourceEditor.find("#addResource").click(function(){
+    resTbl.append($.JST.createFromTemplate({id:"new",name:"resource"}, "RESOURCE_ROW"))
+  });
+
+  //bind save event
+  resourceEditor.find("#resSaveButton").click(function(){
+    var newRes=[];
+    //find for deleted res
+    for (var i=0;i<ge.resources.length;i++){
+      var res=ge.resources[i];
+      var row = resourceEditor.find("[resId="+res.id+"]");
+      if (row.size()>0){
+        //if still there save it
+        var name = row.find("input[name]").val();
+        if (name && name!="")
+          res.name=name;
+        newRes.push(res);
+      } else {
+        //remove assignments
+        for (var j=0;j<ge.tasks.length;j++){
+          var task=ge.tasks[j];
+          var newAss=[];
+          for (var k=0;k<task.assigs.length;k++){
+            var ass=task.assigs[k];
+            if (ass.resourceId!=res.id)
+              newAss.push(ass);
+          }
+          task.assigs=newAss;
+        }
+      }
+    }
+
+    //loop on new rows
+    resourceEditor.find("[resId=new]").each(function(){
+      var row = $(this);
+      var name = row.find("input[name]").val();
+      if (name && name!="")
+        newRes.push (new Resource("tmp_"+new Date().getTime(),name));
+    });
+
+    ge.resources=newRes;
+
+    closeBlackPopup();
+    ge.redraw();
+  });
+
+
+  var ndo = createBlackPage(400, 500).append(resourceEditor);
+}
+
+
+</script>
+<script type="text/javascript">
+  $.JST.loadDecorator("ASSIGNMENT_ROW", function(assigTr, taskAssig) {
+
+    var resEl = assigTr.find("[name=resourceId]");
+    for (var i in taskAssig.task.master.resources) {
+      var res = taskAssig.task.master.resources[i];
+      var opt = $("<option>");
+      opt.val(res.id).html(res.name);
+      if (taskAssig.assig.resourceId == res.id)
+        opt.attr("selected", "true");
+      resEl.append(opt);
+    }
+
+
+    var roleEl = assigTr.find("[name=roleId]");
+    for (var i in taskAssig.task.master.roles) {
+      var role = taskAssig.task.master.roles[i];
+      var optr = $("<option>");
+      optr.val(role.id).html(role.name);
+      if (taskAssig.assig.roleId == role.id)
+        optr.attr("selected", "true");
+      roleEl.append(optr);
+    }
+
+    if(taskAssig.task.master.canWrite && taskAssig.task.canWrite){
+      assigTr.find(".delAssig").click(function() {
+        var tr = $(this).closest("[assigId]").fadeOut(200, function() {
+          $(this).remove();
+        });
+      });
+    }
+
+
+  });
+</script>
+</body>
+</html>

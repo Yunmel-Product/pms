@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		<mapper namespace="com.yunmel.biz.plan.mapper.UserMapper">
+
+	<sql id="userColumns">
+		ID,LAST_MODIFIED,LAST_MODIFIER,CREATOR,CREATION_DATE,PARENT,COMPANY_ID,NAME,MY_PHOTO,NOTES,COURTESY_TITLE,CREATE_BY,CREATE_DATE,UPDATE_BY,UPDATE_DATE,DEL_FLAG
+	</sql>
+
+	<sql id="aliasUserColumns">
+		a.ID,a.LAST_MODIFIED,a.LAST_MODIFIER,a.CREATOR,a.CREATION_DATE,a.PARENT,a.COMPANY_ID,a.NAME,a.MY_PHOTO,a.NOTES,a.COURTESY_TITLE,a.CREATE_BY,a.CREATE_DATE,a.UPDATE_BY,a.UPDATE_DATE,a.DEL_FLAG
+	</sql>
+
+	<select id="findPageInfo" resultType="com.yunmel.biz.plan.model.User">
+		select  <include refid="aliasUserColumns" /> 
+			from plan_user  a 
+		<where>
+			1=1
+			AND a.DEL_FLAG=0
+		  			<if test="lastModifiedStart != null and lastModifiedStart !='' ">
+			    and a.LAST_MODIFIED &gt;=  #{lastModifiedStart}
+			</if>
+			<if test="lastModifiedEnd != null and lastModifiedEnd !='' ">
+			    and a.LAST_MODIFIED &lt;=  #{lastModifiedEnd}
+			</if>
+			<if test="lastModifier != null and lastModifier !='' ">
+			    and a.LAST_MODIFIER like CONCAT( '%' , #{lastModifier}, '%') 
+			</if>
+			<if test="creator != null and creator !='' ">
+			    and a.CREATOR like CONCAT( '%' , #{creator}, '%') 
+			</if>
+			<if test="creationDateStart != null and creationDateStart !='' ">
+			    and a.CREATION_DATE &gt;=  #{creationDateStart}
+			</if>
+			<if test="creationDateEnd != null and creationDateEnd !='' ">
+			    and a.CREATION_DATE &lt;=  #{creationDateEnd}
+			</if>
+			<if test="parent != null and parent !='' ">
+			    and a.PARENT like CONCAT( '%' , #{parent}, '%') 
+			</if>
+			<if test="companyId != null and companyId !='' ">
+			    and a.COMPANY_ID =  #{companyId}
+			</if>
+			<if test="name != null and name !='' ">
+			    and a.NAME like CONCAT( '%' , #{name}, '%') 
+			</if>
+			<if test="myPhoto != null and myPhoto !='' ">
+			    and a.MY_PHOTO like CONCAT( '%' , #{myPhoto}, '%') 
+			</if>
+			<if test="notes != null and notes !='' ">
+			    and a.NOTES like CONCAT( '%' , #{notes}, '%') 
+			</if>
+			<if test="courtesyTitle != null and courtesyTitle !='' ">
+			    and a.COURTESY_TITLE like CONCAT( '%' , #{courtesyTitle}, '%') 
+			</if>
+			<if test="createBy != null and createBy !='' ">
+			    and a.CREATE_BY like CONCAT( '%' , #{createBy}, '%') 
+			</if>
+			<if test="createDate != null and createDate !='' ">
+			    and a.CREATE_DATE =  #{createDate}
+			</if>
+			<if test="updateBy != null and updateBy !='' ">
+			    and a.UPDATE_BY like CONCAT( '%' , #{updateBy}, '%') 
+			</if>
+			<if test="updateDate != null and updateDate !='' ">
+			    and a.UPDATE_DATE =  #{updateDate}
+			</if>
+
+		</where>
+		<if test="sort != null and sort != '' and order != null and order != ''"> 
+			ORDER BY a.${sort}   ${order}
+		</if>
+	</select>
+</mapper>
