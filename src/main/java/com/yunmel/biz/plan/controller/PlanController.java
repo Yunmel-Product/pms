@@ -33,7 +33,8 @@ public class PlanController {
 	public Map<String, Object> getGanttData(HttpServletRequest request){
 		try {
 			String pid = request.getParameter("projectId");
-			Project project = taskService.getProject(pid);
+			//Project project = taskService.getProject(pid);
+			Project project = taskService.getGanttDataByProject(pid);
 			return JsonResult.toSuccess("获取数据成功", project);
 		} catch (Exception e) {
 			e.printStackTrace();

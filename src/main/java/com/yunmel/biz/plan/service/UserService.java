@@ -92,4 +92,8 @@ public class UserService extends BaseService<User>{
 	    }
 	    return c;
 	}
+	
+	public List<User> getUserByUserIds(List<String> users){
+		return userMapper.getUserByUserIds(users);
+	}
 }

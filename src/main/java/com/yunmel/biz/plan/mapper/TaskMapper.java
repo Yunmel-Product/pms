@@ -11,4 +11,6 @@ import com.yunmel.core.base.BaseMapper;
 */
 public interface TaskMapper extends BaseMapper<Task>{	
   public List<Task> findPageInfo(Map<String, Object> params); 
+  
+  public List<Map<String,Object>> getGanttDataByProject(String projectId);
 }

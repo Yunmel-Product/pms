@@ -1,5 +1,7 @@
 package com.yunmel.biz.plan.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.TaskMapper;
 import com.yunmel.biz.plan.model.Project;
 import com.yunmel.biz.plan.model.Task;
+import com.yunmel.biz.plan.model.User;
 import com.yunmel.core.base.BaseService;
 import com.yunmel.utils.Globle;
 import com.yunmel.utils.ParamUtils;
@@ -167,8 +170,43 @@ public class TaskService extends BaseService<Task>{
 		
 		
 		
-		project.setTasks(tasks);
+		//project.setTasks(tasks);
 		
 		return project;
 	}
+	
+	public Project getGanttDataByProject(String projectId){
+		Project project = new Project();
+		
+		List<Map<String, Object>> tasks = taskMapper.getGanttDataByProject(projectId);
+		List<String> allUser = new ArrayList<String>(); //所有task用到的人员
+		
+		for(Iterator<Map<String, Object>> it = tasks.iterator();it.hasNext();){
+			Map<String,Object> temp = it.next();
+			List<Map<String,Object>> assigs = new ArrayList<>(); //当前task的操作人
+			if(temp.containsKey("assigs") && temp.get("assigs") != null){
+				String str = (String) temp.get("assigs");
+				String[] tS = str.split(",");
+				for(String sid: tS){
+					String[] iu = sid.split("@");
+					Map<String,Object> assM = new HashMap<>();
+					assM.put("id", iu[0]);
+					assM.put("resourceId", iu[1]);
+					assM.put("effort", 0);
+					
+					assigs.add(assM);
+					allUser.add(iu[1]);
+				}
+			}
+			temp.put("assigs", assigs);
+		}
+		
+		List<User> allUsers = userService.getUserByUserIds(allUser);
+		
+		project.setTasks(tasks);
+		project.setResources(allUsers);
+		
+		return project;
+	}
+	
 }

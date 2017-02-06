@@ -11,4 +11,6 @@ import com.yunmel.core.base.BaseMapper;
 */
 public interface UserMapper extends BaseMapper<User>{	
   public List<User> findPageInfo(Map<String, Object> params); 
+  
+  public List<User> getUserByUserIds(List<String> users);
 }

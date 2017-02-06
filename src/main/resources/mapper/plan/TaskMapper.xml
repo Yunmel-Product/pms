@@ -217,4 +217,14 @@
 			ORDER BY a.${sort}   ${order}
 		</if>
 	</select>
+	
+	<select id="getGanttDataByProject" parameterType="java.lang.String" resultType="Map">
+		SELECT GROUP_CONCAT(CONCAT(A.id,'@',A.user_id)) assigs,T.* FROM plan_task T 
+		LEFT JOIN plan_assignment A on T.id = A.task_id
+		LEFT JOIN plan_user U ON A.user_id = U.id
+		
+		WHERE project_id = #{projectId}
+		GROUP BY T.id
+		ORDER BY T.`code` ASC
+	</select>
 </mapper>

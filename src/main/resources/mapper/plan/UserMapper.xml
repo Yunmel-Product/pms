@@ -70,4 +70,11 @@
 			ORDER BY a.${sort}   ${order}
 		</if>
 	</select>
+	
+	<select id="getUserByUserIds" resultType="com.yunmel.biz.plan.model.User">
+		SELECT * FROM plan_user WHERE id in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
 </mapper>

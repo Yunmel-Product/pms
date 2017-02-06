@@ -2,6 +2,7 @@ package com.yunmel.biz.plan.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Project {
 	private Long serverTimeOffset = 3600000L;
@@ -14,7 +15,7 @@ public class Project {
 	private boolean canWrite = true;
 	private boolean ok = false;
 	
-	private List<Task> tasks = new ArrayList<Task>();
+	private List<Map<String, Object>> tasks = new ArrayList<Map<String, Object>>();
 	private List<Task> deletedTaskIds = new ArrayList<Task>();
 	private List<User> resources = new ArrayList<User>();
 	private List<Role> roles = new ArrayList<Role>();
@@ -67,10 +68,10 @@ public class Project {
 	public void setNotifyStatusAndDateChanges(boolean notifyStatusAndDateChanges) {
 		this.notifyStatusAndDateChanges = notifyStatusAndDateChanges;
 	}
-	public List<Task> getTasks() {
+	public List<Map<String, Object>> getTasks() {
 		return tasks;
 	}
-	public void setTasks(List<Task> tasks) {
+	public void setTasks(List<Map<String, Object>> tasks) {
 		this.tasks = tasks;
 	}
 	public List<User> getResources() {
