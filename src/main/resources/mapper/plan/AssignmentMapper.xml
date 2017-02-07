@@ -63,4 +63,26 @@
 		SELECT U.* FROM plan_assignment A LEFT JOIN plan_user U ON A.user_id = U.id
 		WHERE A.task_id = #{taskId}
 	</select>
+	
+	<delete id="deleteByTaskIds" parameterType="java.util.List">
+		delete from plan_assignment WHERE 1=1
+		and task_id in
+		<foreach collection="list" item="item" separator="," open="(" close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<select id="getAssByTaskIds"  resultType="com.yunmel.biz.plan.model.Assignment">
+		 SELECT * FROM plan_assignment WHERE task_id in
+		 <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<insert id="saveAssList">
+		INSERT INTO plan_assignment (id,user_id,task_id,role_id) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.id},#{item.userId},#{item.taskId},#{item.roleId})
+		</foreach>
+	</insert>
 </mapper>

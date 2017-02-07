@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,11 +18,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.yunmel.biz.plan.mapper.TaskMapper;
+import com.yunmel.biz.plan.model.Assignment;
 import com.yunmel.biz.plan.model.Project;
 import com.yunmel.biz.plan.model.Task;
 import com.yunmel.biz.plan.model.User;
 import com.yunmel.core.base.BaseService;
 import com.yunmel.utils.Globle;
+import com.yunmel.utils.IdUtils;
 import com.yunmel.utils.ParamUtils;
 
 /**
@@ -37,6 +38,8 @@ public class TaskService extends BaseService<Task>{
 	private TaskMapper taskMapper;
 	@Resource
 	private UserService userService;
+	@Resource
+	private AssignmentService assignmentService;
 	
 	/**
 	 * Task 保存
@@ -108,19 +111,78 @@ public class TaskService extends BaseService<Task>{
 	
 	public void _cmdSave(String param) throws Exception{
 		JSONObject json = JSONObject.parseObject(param);
-		List<Long> dTasks = JSON.parseArray(json.getString("deletedTaskIds"), Long.class);
+		List<String> dTasks = JSON.parseArray(json.getString("deletedTaskIds"), String.class);
 		if(dTasks.size()>0){
 			//删除
+			_cmdDelete(dTasks);
 		}
 		
 		JSONArray jTasks = json.getJSONArray("tasks");
 		
+		List<String> needCheckAss = new ArrayList<String>(); //所有需要检查的操作人
+		List<Assignment> needSaveAss = new ArrayList<>(); //所有需要保存的操作人
+		
+		List<String> allTaskId = new ArrayList<>(); //所有的任务ID
+		
 		for(Iterator it = jTasks.iterator();it.hasNext();){
 			JSONObject jTask = (JSONObject) it.next();
 			Task task = transTask(jTask);
+			
+			allTaskId.add(task.getId());
+			
+			//组装操作人的数据，方便保存
+			JSONArray assJ = jTask.getJSONArray("assigs");
+			for(Iterator assIt = assJ.iterator();assIt.hasNext();){
+				JSONObject assO = (JSONObject) assIt.next();
+				String id = (String) assO.get("id");
+				
+				if(id.trim().startsWith("tmp_")){
+					String resourceId = (String) assO.get("resourceId");
+					Integer effort = (Integer) assO.get("effort");
+					String roleId = (String) assO.get("roleId");
+					Assignment ass = new Assignment();
+					ass.setId(IdUtils.get());
+					ass.setUserId(resourceId);
+					ass.setRoleId(roleId);
+					ass.setTaskId(task.getId());
+					needSaveAss.add(ass);
+				}else{
+					needCheckAss.add(id);
+				}
+			}
+			
 			this.saveTask(task);
 		}
 		
+		
+		//处理操作人
+		List<Assignment> assS = assignmentService.getAssByTaskIds(allTaskId);
+		
+		List<String> needDelAss = new ArrayList<>();
+		
+		for(Iterator<Assignment> itAss = assS.iterator();itAss.hasNext();){
+			Assignment ass = itAss.next();
+			String dbId = ass.getId();
+			boolean needdel = true;
+			for(Iterator<String> it = needCheckAss.iterator();it.hasNext();){
+				if(dbId.equals(it.next())){
+					needdel = false;
+				}
+			}
+			
+			if(needdel){
+				needDelAss.add(dbId);
+			}
+		}
+		
+		//删除操作人
+		if(needDelAss.size()>0){
+			String[] delIds = new String[needDelAss.size()];
+			assignmentService.delByIds(needDelAss.toArray(delIds));
+		}
+		if(needSaveAss.size()>0){
+			assignmentService.saveAssList(needSaveAss);
+		}
 	}
 	
 	
@@ -153,26 +215,13 @@ public class TaskService extends BaseService<Task>{
 	 * 删除任务
 	 * @param tasks
 	 */
-	public void _cmdDelete(JSONObject json){
+	public void _cmdDelete(List<String> ids){
+		//1 删除 操作人表 使用list参数
+		assignmentService.deleteByTaskIds(ids);
 		
-	}
-	
-	public Project getProject(String id) throws Exception{
-		if(StringUtils.isBlank(id)){
-			throw new Exception("项目ID不能为空");
-		}
-		
-		Project project = new Project();
-		
-		Task task = new Task();
-		task.setProjectId(id);
-		List<Task> tasks = this.select(task, " `code` ASC ");
-		
-		
-		
-		//project.setTasks(tasks);
-		
-		return project;
+		//2 删除任务表 使用array参数
+		String[] delid = new String[ids.size()];
+		this.delByIds(ids.toArray(delid));
 	}
 	
 	public Project getGanttDataByProject(String projectId){
@@ -201,12 +250,18 @@ public class TaskService extends BaseService<Task>{
 			temp.put("assigs", assigs);
 		}
 		
-		List<User> allUsers = userService.getUserByUserIds(allUser);
+		/**
+		 * 下面2选1
+		 */
+		//查询特定的用户
+		//List<User> allUsers = userService.getUserByUserIds(allUser);
+		
+		//查询所有用户
+		List<User> allUsers = userService.findAll();
 		
 		project.setTasks(tasks);
 		project.setResources(allUsers);
 		
 		return project;
 	}
-	
 }

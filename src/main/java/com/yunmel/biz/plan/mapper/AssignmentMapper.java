@@ -13,4 +13,10 @@ public interface AssignmentMapper extends BaseMapper<Assignment>{
   public List<Assignment> findPageInfo(Map<String, Object> params); 
   
   public List<Map<String,Object>> getTaskUser(String taskId);
+  
+  public void deleteByTaskIds(List<String> taskIds);
+  
+  public List<Assignment> getAssByTaskIds(List<String> taskIds);
+  
+  public void saveAssList(Map<String,List<Assignment>> map);
 }

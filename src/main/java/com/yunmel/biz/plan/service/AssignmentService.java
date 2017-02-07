@@ -1,5 +1,6 @@
 package com.yunmel.biz.plan.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,5 +96,19 @@ public class AssignmentService extends BaseService<Assignment>{
 	
 	public List<Map<String,Object>> getTaskUser(String taskId){
 		return assignmentMapper.getTaskUser(taskId);
+	}
+	
+	public void deleteByTaskIds(List<String> taskIds){
+		assignmentMapper.deleteByTaskIds(taskIds);
+	}
+	
+	public List<Assignment> getAssByTaskIds(List<String> taskIds){
+		return assignmentMapper.getAssByTaskIds(taskIds);
+	}
+	
+	public void saveAssList(List<Assignment> list){
+		Map<String,List<Assignment>> map = new HashMap<>();
+		map.put("list", list);
+		assignmentMapper.saveAssList(map);
 	}
 }
