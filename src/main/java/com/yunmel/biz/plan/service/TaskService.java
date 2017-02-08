@@ -232,6 +232,7 @@ public class TaskService extends BaseService<Task>{
 		
 		for(Iterator<Map<String, Object>> it = tasks.iterator();it.hasNext();){
 			Map<String,Object> temp = it.next();
+			
 			List<Map<String,Object>> assigs = new ArrayList<>(); //当前task的操作人
 			if(temp.containsKey("assigs") && temp.get("assigs") != null){
 				String str = (String) temp.get("assigs");
@@ -248,6 +249,22 @@ public class TaskService extends BaseService<Task>{
 				}
 			}
 			temp.put("assigs", assigs);
+			
+			temp.put("canAddIssue", true);
+			temp.put("canWrite", true);
+			
+			//设置任务颜色
+			if(temp.containsKey("status") && temp.get("status") != null){
+				String status = (String) temp.get("status");
+				temp.put("statusColor", getStatusColor(status));
+			}
+			
+			//设置工时
+			if(temp.containsKey("totalWorklogDone") && temp.get("totalWorklogDone")!=null){
+				Long time = (Long) temp.get("totalWorklogDone");
+				temp.put("totalWorklog", time);
+			}
+			
 		}
 		
 		/**
@@ -263,5 +280,20 @@ public class TaskService extends BaseService<Task>{
 		project.setResources(allUsers);
 		
 		return project;
+	}
+	
+	private String getStatusColor(String status){
+	     String color = "#666666";
+	    if ("STATUS_ACTIVE".equals(status))
+	       color = "#3BBF67";
+	     else if ("STATUS_SUSPENDED".equals(status))
+	       color = "#F9C154";
+	    else if ("STATUS_DONE".equals(status))
+	       color = "#6EBEF4";
+	     else if ("STATUS_FAILED".equals(status))
+	       color = "#763A96";
+	     else if ("STATUS_UNDEFINED".equals(status)) {
+	       color = "#dededf";}
+	       return color;
 	}
 }

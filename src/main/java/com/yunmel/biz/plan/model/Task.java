@@ -23,7 +23,7 @@ public class Task extends BaseEntity{
 	private Integer relevancex;
 	private Double progress;
 	private String tags;
-	private Integer progressByWorklog;
+	private Integer progressByWorklog = 0;
 	private Long totalWorklogDone;
 	private Long totalWorklogEstimated;
 	private String totalCostsDone;
@@ -40,8 +40,8 @@ public class Task extends BaseEntity{
 	private String costCenter;
 	private String notes;
 	private String orderFactor;
-	private Integer startIsMilestone;
-	private Integer endIsMilestone;
+	private Integer startIsMilestone = 0;
+	private Integer endIsMilestone = 1;
 	private String forecasted;
 	private String customField1;
 	private String customField2;
