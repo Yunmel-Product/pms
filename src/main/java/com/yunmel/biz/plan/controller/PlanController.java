@@ -54,5 +54,38 @@ public class PlanController {
 			return JsonResult.toSuccess("保存失败,系统异常", null);
 		}
 	}
-	
+
+	//////////////////////////////////////  begin 移动端接口 begin  //////////////////////////////////////////
+
+    /**
+     * 获取用户负责的任务
+     * @param userId
+     * @return
+     */
+	@RequestMapping("getTaskByUserId")
+	@ResponseBody
+	public Object getTaskByUserId(@RequestParam String userId){
+		try{
+			return JsonResult.toSuccess("查询用户任务成功", taskService.getUserTasks(userId));
+		}catch (Exception e){
+			e.printStackTrace();
+			return JsonResult.toError("查询用户任务失败，系统异常",null);
+		}
+	}
+
+    /**
+     * 上报任务工作进度
+     * @param taskId
+     * @param progress
+     * @return
+     */
+	public Object reportTaskProgress(@RequestParam  String taskId,@RequestParam Double progress){
+        try{
+            taskService.reportTaskProgress(taskId, progress);
+            return JsonResult.toSuccess("上报任务进度成功",null);
+        }catch (Exception e){
+            e.printStackTrace();
+            return JsonResult.toSuccess(e.getMessage() == null?"上报任务进度失败，系统异常":e.getMessage(),null);
+        }
+    }
 }

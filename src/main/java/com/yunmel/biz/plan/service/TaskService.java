@@ -63,7 +63,7 @@ public class TaskService extends BaseService<Task>{
   	
   	/**
 	 * 不分页-根据参数查询相关的Task
-	 * @param params键值对的查询参数
+	 * @param params 键值对的查询参数
 	 * @return List<Task>
 	 */
   	public List<Task> findByParams(Map<String, Object> params) {
@@ -72,7 +72,7 @@ public class TaskService extends BaseService<Task>{
 	
 	/**
 	 * 分页-根据参数查询相关的Task
-	 * @param params键值对的查询参数
+	 * @param params 键值对的查询参数
 	 * @return List<Task>
 	 */
   	public PageInfo<Task> findPageInfo(Map<String, Object> params) {
@@ -213,7 +213,7 @@ public class TaskService extends BaseService<Task>{
 	
 	/**
 	 * 删除任务
-	 * @param tasks
+	 * @param ids
 	 */
 	public void _cmdDelete(List<String> ids){
 		//1 删除 操作人表 使用list参数
@@ -296,4 +296,26 @@ public class TaskService extends BaseService<Task>{
 	       color = "#dededf";}
 	       return color;
 	}
+
+	/**
+	 *
+	 * @param userId
+	 * @return
+	 */
+	public List<Map<String,Object>> getUserTasks(String userId){
+        return taskMapper.getUserTasks(userId);
+	}
+
+	public void reportTaskProgress(String taskId, Double progress) throws Exception{
+        if(progress>100){
+            throw new Exception("任务进度不能大于100");
+        }
+
+        Task task = this.selectByPrimaryKey(taskId);
+
+        if(task != null){
+            task.setProgress(progress);
+            this.saveTask(task);
+        }
+    }
 }

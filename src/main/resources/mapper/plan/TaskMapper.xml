@@ -227,4 +227,12 @@
 		GROUP BY T.id
 		ORDER BY T.`code` ASC
 	</select>
+	
+	<select id="getUserTasks" parameterType="java.lang.String" resultType="Map">
+		SELECT * FROM plan_task T
+		LEFT JOIN plan_assignment A ON T.id = A.task_id
+		LEFT JOIN plan_user U ON U.id = A.user_id
+		WHERE U.id = #{userId}
+		ORDER BY T.`code` ASC
+	</select>
 </mapper>
