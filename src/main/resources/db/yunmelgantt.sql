@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2017-02-07 17:06:37
+Date: 2017-02-09 15:34:29
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,10 +34,6 @@ CREATE TABLE `biz_auth` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- ----------------------------
--- Records of biz_auth
--- ----------------------------
-
--- ----------------------------
 -- Table structure for plan_assignment
 -- ----------------------------
 DROP TABLE IF EXISTS `plan_assignment`;
@@ -57,13 +53,6 @@ CREATE TABLE `plan_assignment` (
   `DEL_FLAG` varchar(1) DEFAULT NULL COMMENT '删除标识',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of plan_assignment
--- ----------------------------
-INSERT INTO `plan_assignment` VALUES ('3Wlw17kw4ZN9AB_XLKgMKp', null, 'a000001066702815', 'a000001307703170', null, null, null, null, null, null, null, null, null);
-INSERT INTO `plan_assignment` VALUES ('5dA0plXMAuo8ACU3zcfh4N', null, '6AZlaJdWQnubBpDZ5Wzvj5', '7PKd7X1O4Kraidogzsv5sQ', null, null, null, null, null, null, null, null, null);
-INSERT INTO `plan_assignment` VALUES ('bag-vC3dQ6daYvFBt46GIu', null, 'a000000406844333', '7PKd7X1O4Kraidogzsv5sQ', null, null, null, null, null, null, null, null, null);
 
 -- ----------------------------
 -- Table structure for plan_role
@@ -86,10 +75,6 @@ CREATE TABLE `plan_role` (
   `DEL_FLAG` varchar(1) DEFAULT NULL COMMENT '删除标识',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of plan_role
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for plan_schedule
@@ -116,10 +101,6 @@ CREATE TABLE `plan_schedule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of plan_schedule
--- ----------------------------
-
--- ----------------------------
 -- Table structure for plan_task
 -- ----------------------------
 DROP TABLE IF EXISTS `plan_task`;
@@ -131,10 +112,10 @@ CREATE TABLE `plan_task` (
   `description` varchar(2000) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `relevancex` int(11) DEFAULT NULL,
-  `progress` double DEFAULT NULL,
+  `progress` double DEFAULT NULL COMMENT '工作进度',
   `tags` varchar(1024) DEFAULT NULL,
-  `progress_by_worklog` bit(1) DEFAULT NULL,
-  `total_worklog_done` bigint(20) DEFAULT NULL,
+  `progress_by_worklog` bit(1) DEFAULT NULL COMMENT '根据工作记录自动计算进度',
+  `total_worklog_done` bigint(20) DEFAULT NULL COMMENT '工作完成时长',
   `total_worklog_estimated` bigint(20) DEFAULT NULL,
   `total_costs_done` double DEFAULT NULL,
   `total_costs_estimated` double DEFAULT NULL,
@@ -186,15 +167,9 @@ CREATE TABLE `plan_task` (
   `UPDATE_DATE` bigint(20) DEFAULT NULL COMMENT '修改时间',
   `DEL_FLAG` varchar(1) DEFAULT NULL COMMENT '删除标识',
   `project_id` varchar(32) DEFAULT NULL COMMENT '项目id',
+  `depends` varchar(15) DEFAULT NULL COMMENT '依赖',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of plan_task
--- ----------------------------
-INSERT INTO `plan_task` VALUES ('7PKd7X1O4Kraidogzsv5sQ', '1.1', '子任务', null, '', 'STATUS_ACTIVE', null, '0', null, null, null, null, null, null, null, null, null, null, null, null, '1', null, null, null, null, null, '\0', '\0', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '1', '2017-02-05 00:00:00', '2017-02-05 23:59:59', null, null, null, '1486439900654', '0', '1');
-INSERT INTO `plan_task` VALUES ('a000001307703170', '1', '主任务', null, '额外全额委屈恶气', 'STATUS_ACTIVE', null, '0', null, null, '14400000', null, null, null, null, null, null, null, null, null, '14', null, null, null, null, null, '\0', '\0', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '0', '2017-02-05 00:00:00', '2017-02-18 23:59:59', null, null, null, '1486439900643', '0', '1');
-INSERT INTO `plan_task` VALUES ('bsCjBgRMAuB8lFA6kAhudu', '1.2', '1312', null, '', 'STATUS_ACTIVE', null, '0', null, null, null, null, null, null, null, null, null, null, null, null, '1', null, null, null, null, null, '\0', '\0', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '1', '2017-02-05 00:00:00', '2017-02-05 23:59:59', null, null, null, '1486439900664', '0', '1');
 
 -- ----------------------------
 -- Table structure for plan_type
@@ -212,10 +187,6 @@ CREATE TABLE `plan_type` (
   `DEL_FLAG` varchar(1) DEFAULT NULL COMMENT '删除标识',
   PRIMARY KEY (`type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of plan_type
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for plan_user
@@ -240,11 +211,3 @@ CREATE TABLE `plan_user` (
   `DEL_FLAG` varchar(1) DEFAULT NULL COMMENT '删除标识',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of plan_user
--- ----------------------------
-INSERT INTO `plan_user` VALUES ('6AZlaJdWQnubBpDZ5Wzvj5', null, null, null, null, null, null, 'xxx', null, null, null, null, null, null, null, '0');
-INSERT INTO `plan_user` VALUES ('a000000406844333', null, null, null, null, null, null, 'yang', null, null, null, null, null, null, null, '0');
-INSERT INTO `plan_user` VALUES ('a000001066702815', null, null, null, null, null, null, 'chen', null, null, null, null, null, null, null, '0');
-INSERT INTO `plan_user` VALUES ('aaxwhNtEQuPadRGdqpYHTz', null, null, null, null, null, null, 'yyyyy', null, null, null, null, null, null, null, '0');

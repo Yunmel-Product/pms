@@ -21,9 +21,12 @@ public class Task extends BaseEntity{
 	private String description;
 	private String status;
 	private Integer relevancex;
+	/**工作进度*/
 	private Double progress;
 	private String tags;
-	private Integer progressByWorklog = 0;
+	/**根据工作记录自动计算进度*/
+	private Integer progressByWorklog;
+	/**工作完成时长*/
 	private Long totalWorklogDone;
 	private Long totalWorklogEstimated;
 	private String totalCostsDone;
@@ -40,8 +43,8 @@ public class Task extends BaseEntity{
 	private String costCenter;
 	private String notes;
 	private String orderFactor;
-	private Integer startIsMilestone = 0;
-	private Integer endIsMilestone = 1;
+	private Integer startIsMilestone;
+	private Integer endIsMilestone;
 	private String forecasted;
 	private String customField1;
 	private String customField2;
@@ -83,6 +86,8 @@ public class Task extends BaseEntity{
 	private String delFlag;
 	/**项目id*/
 	private String projectId;
+	/**依赖*/
+	private String depends;
 
 	public String getCode(){
 		return this.getString("code");
@@ -454,5 +459,11 @@ public class Task extends BaseEntity{
 	}
 	public void setProjectId(String projectId){
 		this.set("projectId",projectId);
+	}
+	public String getDepends(){
+		return this.getString("depends");
+	}
+	public void setDepends(String depends){
+		this.set("depends",depends);
 	}
 }

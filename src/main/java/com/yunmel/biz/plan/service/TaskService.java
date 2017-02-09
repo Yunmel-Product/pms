@@ -208,6 +208,7 @@ public class TaskService extends BaseService<Task>{
 		task.setEnd(json.getDate("end"));
 		task.setDelFlag("0");
 		task.setProjectId(json.getString("projectId"));
+		task.setDepends(json.getString("depends"));
 		return task;
 	}
 	
