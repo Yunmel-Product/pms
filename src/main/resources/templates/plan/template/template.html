@@ -127,14 +127,23 @@
     <tr>
       <td>
         <table cellpadding="5">
+           <tr class="typeTr" id="typeTr">
+            <td>
+            	<label for="code">任务类型</label><br>
+            	<select class="formElements" name="gtype" id="gtype">
+            		<option value="1类型">1类型</option>
+            		<option value="2">2</option>
+            	</select>
+            </td>
+           </tr>
           <tr>
-            <td><label for="code">任务编码</label><br><input type="text" name="code" id="code" value="" class="formElements"></td>
+            <td><label for="code">任务编码1</label><br><input type="text" name="code" id="code" value="" class="formElements"></td>
            </tr><tr>
             <td><label for="name">任务名称</label><br><input type="text" name="name" id="name" value=""  size="35" class="formElements"></td>
           </tr>
           <tr></tr>
             <td>
-              <label for="description">description</label><br>
+              <label for="description">任务描述</label><br>
               <textarea rows="5" cols="30" id="description" name="description" class="formElements"></textarea>
             </td>
           </tr>
@@ -143,26 +152,26 @@
       <td valign="top">
         <table cellpadding="5">
           <tr>
-          <td colspan="2"><label for="status">status</label><br><div id="status" class="taskStatus" status=""></div></td>
+          <td colspan="2"><label for="status">状态</label><br><div id="status" class="taskStatus" status=""></div></td>
           <tr>
-          <td colspan="2"><label for="progress">progress</label><br><input type="text" name="progress" id="progress" value="" size="3" class="formElements"></td>
+          <td colspan="2"><label for="progress">进度</label><br><input type="text" name="progress" id="progress" value="" size="3" class="formElements"></td>
           </tr>
           <tr>
-          <td><label for="start">start</label><br><input type="text" name="start" id="start"  value="" class="date" size="10" class="formElements"><input type="checkbox" id="startIsMilestone"> </td>
-          <td rowspan="2" class="graph" style="padding-left:50px"><label for="duration">dur.</label><br><input type="text" name="duration" id="duration" value=""  size="5" class="formElements"></td>
+          <td><label for="start">开始时间</label><br><input type="text" name="start" id="start"  value="" class="date" size="10" class="formElements"><input type="checkbox" id="startIsMilestone"> </td>
+          <td rowspan="2" class="graph" style="padding-left:50px"><label for="duration">工期</label><br><input type="text" name="duration" id="duration" value=""  size="5" class="formElements"></td>
         </tr><tr>
-          <td><label for="end">end</label><br><input type="text" name="end" id="end" value="" class="date"  size="10" class="formElements"><input type="checkbox" id="endIsMilestone"></td>
+          <td><label for="end">结束时间</label><br><input type="text" name="end" id="end" value="" class="date"  size="10" class="formElements"><input type="checkbox" id="endIsMilestone"></td>
         </table>
       </td>
     </tr>
     </table>
 
-  <h2>assignments</h2>
+  <h2>处理人</h2>
   <table  cellspacing="1" cellpadding="0" width="100%" id="assigsTable">
     <tr>
-      <th style="width:100px;">name</th>
-      <th style="width:70px;">role</th>
-      <th style="width:30px;">est.wklg.</th>
+      <th style="width:100px;">名称</th>
+      <th style="width:70px;">权限</th>
+      <th style="width:30px;">工时</th>
       <th style="width:30px;" id="addAssig"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
     </tr>
   </table>

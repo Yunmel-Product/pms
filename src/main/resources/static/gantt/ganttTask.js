@@ -29,16 +29,17 @@ function TaskFactory() {
     /**
      * Build a new Task
      */
-    this.build = function (id, name, code, level, start, duration, collapsed) {
+    this.build = function (id, name, code, level, start, duration, collapsed, gtype) {
         // Set at beginning of day
         var adjusted_start = computeStart(start);
         var calculated_end = computeEndByDuration(adjusted_start, duration);
 
-        return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed);
+        return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed, gtype);
     };
 }
 
-function Task(id, name, code, level, start, end, duration, collapsed) {
+function Task(id, name, code, level, start, end, duration, collapsed, gtype) {
+	this.gtype = gtype;	//ä»»åŠ¡çš„ç±»åž‹
     this.id = id;
     this.name = name;
     this.progress = 0;
@@ -792,7 +793,7 @@ Task.prototype.indent = function () {
             var new_end = computeEndByDuration(parent.start, this.duration);
             this.master.changeTaskDates(this, parent.start, new_end);
         }
-        //TODO:ÖìÊéÑå ¶Ôcode×Ô¶¯ÐÎ³É²ã¼¶±àÂë
+        //TODO:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½codeï¿½Ô¶ï¿½ï¿½Î³É²ã¼¶ï¿½ï¿½ï¿½ï¿½
         if (this.master.isLevelCode) {
             this.master.levelCode();
         }
@@ -840,7 +841,7 @@ Task.prototype.outdent = function () {
         //remove links from me to my new children
         chds[i].setPeriod(chds[i].start + 1, chds[i].end + 1);
     }
-    //TODO:ÖìÊéÑå ¶Ôcode×Ô¶¯ÐÎ³É²ã¼¶±àÂë
+    //TODO:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½codeï¿½Ô¶ï¿½ï¿½Î³É²ã¼¶ï¿½ï¿½ï¿½ï¿½
     if (this.master.isLevelCode) {
         this.master.levelCode();
     }
@@ -895,7 +896,7 @@ Task.prototype.moveUp = function () {
         var rows = this.master.editor.element.find("tr[taskId]");
         var domBlockToMove = rows.slice(row, row + descNumber + 1);
         rows.eq(newRow).before(domBlockToMove);
-        //TODO:ÖìÊéÑå ¶Ôcode×Ô¶¯ÐÎ³É²ã¼¶±àÂë
+        //TODO:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½codeï¿½Ô¶ï¿½ï¿½Î³É²ã¼¶ï¿½ï¿½ï¿½ï¿½
         if (this.master.isLevelCode) {
             this.master.levelCode();
         }
@@ -955,7 +956,7 @@ Task.prototype.moveDown = function () {
         var aft = rows.eq(newRow - 1);
         var domBlockToMove = rows.slice(row, row + descNumber + 1);
         aft.after(domBlockToMove);
-        //TODO:ÖìÊéÑå ¶Ôcode×Ô¶¯ÐÎ³É²ã¼¶±àÂë
+        //TODO:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½codeï¿½Ô¶ï¿½ï¿½Î³É²ã¼¶ï¿½ï¿½ï¿½ï¿½
         if (this.master.isLevelCode) {
             this.master.levelCode();
         }

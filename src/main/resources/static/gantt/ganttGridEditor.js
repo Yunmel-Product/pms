@@ -421,7 +421,7 @@ GridEditor.prototype.bindRowInputEvents = function (task, taskRow) {
 
 GridEditor.prototype.openFullEditor = function (task, taskRow) {
     var self = this;
-
+    
     //task editor in popup
     var taskId = taskRow.attr("taskId");
     //console.debug(task);
@@ -578,6 +578,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
             task.duration = parseInt(taskEditor.find("#duration").val());
             task.startIsMilestone = taskEditor.find("#startIsMilestone").is(":checked");
             task.endIsMilestone = taskEditor.find("#endIsMilestone").is(":checked");
+            task.gtype = taskEditor.find("#gtype").val();
 
             //set assignments
             taskEditor.find("tr[assigId]").each(function () {
@@ -633,4 +634,8 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     }
 
     var ndo = createBlackPage(800, 500).append(taskEditor);
+    
+    if(task.level != 0){
+    	$("#typeTr").remove();
+    }
 };
